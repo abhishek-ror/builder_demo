@@ -1,0 +1,22 @@
+require 'rails_helper'
+RSpec.describe ::BxBlockOrdercreation3::CarOrder, type: :model do
+  describe 'associations' do
+    it { should belong_to(:account).class_name('AccountBlock::Account').with_foreign_key('account_id') }
+    it { should belong_to(:car_ad).class_name('BxBlockAdmin::CarAd').with_foreign_key('car_ad_id').optional }
+    it { should belong_to(:vehicle_inspection).class_name('BxBlockAdmin::VehicleInspection').with_foreign_key('vehicle_inspection_id').optional }
+  end
+
+  describe 'validation' do
+    it { should validate_presence_of(:continent) }
+    it { should validate_presence_of(:country) }
+    it { should validate_presence_of(:state) }
+    it { should validate_presence_of(:country_code) }
+    it { should validate_presence_of(:phone_number) }
+  end
+
+  describe 'enum' do
+    it { should define_enum_for(:status) }
+    it { should define_enum_for(:instant_deposit_status) }
+    it { should define_enum_for(:final_invoice_payment_status) }
+  end
+end

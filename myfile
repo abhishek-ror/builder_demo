@@ -1,0 +1,112 @@
+# RSpec.describe BxBlockVehicleShipping::VehiclePaymentsController, type: :controller do
+
+#     before do
+#       @account = create(:account)
+#       @country = create(:country)
+#       @city = create(:city)
+#       @model = create(:model)
+#       @trim = create(:trim ,model_id: @model.id)
+#       @state = create(:state)
+#       @region = create(:region)
+#       @token = BuilderJsonWebToken.encode(@account.id, {account_type: @account.type}, 1.year.from_now)
+#       @email_otp = AccountBlock::EmailOtp.create!(email: @account.email)
+       @car_order = BxBlockVehicleShipping::VehicleSelling.create!(account_id: @account.id, city_id: @city.id, trim_id: @trim.id, region_id: @region.id, country_id: @country.id,state_id: @state.id, price: 90000)
+      
+       @card_params = {
+                        "number": 5555555555554444,
+                        "month": 11,
+                         "year": 2027,
+                         "cvc": 898
+                     }
+       @payment_attributes = {
+                               amount: @car_order.price,
+                                currency: 'usd',
+                                description: 'VehicleSelling-Price',
+                                metadata: {type: 'BxBlockVehicleShipping::VehicleSelling', id: @car_order.id}
+                             }
+       request.headers["token"] = login_user(@account)
+     end
+
+     describe "POST payment" do
+      let!(:account) { @account }
+      let!(:car_order) { @car_order }
+
+     context "when payment is successful" do
+       before do
+         request.headers["token"] = login_user(account)
+         allow_any_instance_of(BxBlockPayments::CreditCardService).to receive(:create_credit_card).and_return("card_123")
+         allow_any_instance_of(BxBlockPayments::StripeIntegrationService).to receive(:stripe_payment_intent).and_return(double(id: "payment_123", amount: 100))
+         @card_params = {
+                        "number": 5555555555554444,
+                        "month": 11,
+                         "year": 2027,
+                         "cvc": 898
+                     }
+       @payment_attributes = {
+                               amount: car_order.price,
+                                currency: 'usd',
+                                description: 'VehicleSelling-Price',
+                                metadata: {type: 'BxBlockVehicleShipping::VehicleSelling', id: car_order.id}
+                             }
+       end
+
+       it "creates a vehicle payment and returns a success response" do
+         post :payment, params: { card_params: @card_params, payment_attributes: @payment_attributes}
+         debugger
+         expect(JSON.parse(response.body)["message"]).to eq("payment process successful")
+         expect(response.status).to eq(200)
+       end
+
+       it "should not creates a vehicle payment without payment_attributes and returns a fail response" do
+         post :payment, params: { card_params: @card_params, payment_attributes: nil }
+         expect(response.status).to eq(400)
+       end
+
+       it "should not creates a vehicle payment without card_params and returns a fail response" do
+         post :payment, params: { card_params: nil, payment_attributes: @payment_attributes }
+         expect(response.status).to eq(400)
+       end
+
+       it "should not creates a vehicle payment without params" do
+         post :payment
+         expect(response.status).to eq(400)
+       end
+
+     end
+
+     context "when payment fails" do
+       before do
+         request.headers["token"] = login_user(@account)
+         allow_any_instance_of(BxBlockPayments::CreditCardService).to receive(:create_credit_card).and_return("card_123")
+         allow_any_instance_of(BxBlockPayments::StripeIntegrationService).to receive(:stripe_payment_intent).and_return(nil)
+       end
+
+       it "returns an error response" do
+         post :payment, params: { card_params: @card_params, payment_attributes: @payment_attributes }
+          expect(response.status)
+          expect(assigns(:payment)).to be_nil
+         expect(JSON.parse(response.body)["message"]).to eq("Unable to initiate payment process")
+          expect(response.status).to eq(422)
+         expect(response).to have_http_status(422)
+       end
+
+       it "should not creates a vehicle payment without payment_attributes and returns a fail response" do
+         post :payment, params: { card_params: @card_params, payment_attributes: nil }
+         expect(response.status).to eq(400)
+       end
+
+       it "should not creates a vehicle payment without card_params and returns a fail response" do
+         post :payment, params: { card_params: nil, payment_attributes: @payment_attributes }
+         expect(response.status).to eq(400)
+       end
+     end
+
+   end
+ end
+
+
+
+
+
+
+

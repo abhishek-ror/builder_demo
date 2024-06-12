@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p>
+     <%#= @registration_url&.gsub("####", @otp&.to_s)&.html_safe  %>
+
+     <% if @registration_url.present? %>
+      <% content_without_image = @registration_url.gsub(/<img[^>]+>/i, '') %>
+      <%= content_without_image.gsub("####", @otp&.to_s)&.html_safe %>
+      <% @image_urls.each do |image_url| %>
+        <% image_data = image_url.split(",")[1] %>
+        <% if image_data.present? %>
+          <% image_data = Base64.decode64(image_data) %>
+          <% if image_data.present? %>
+            <% image_filename = "#{Time.now.to_i}_#{SecureRandom.hex(8)}.jpg" %>
+            <% attachments.inline[image_filename] = image_data %>
+            <%= image_tag attachments[image_filename].url %>
+          <% else %>
+            <%= "Invalid image data for URL: #{image_url}" %>
+          <% end %>
+        <% else %>
+          <%= "Invalid image URL: #{image_url}" %>
+        <% end %>
+      <% end %>
+    <% else %>
+      No content found.
+    <% end %>
+    </p>
+  </body>
+</html>

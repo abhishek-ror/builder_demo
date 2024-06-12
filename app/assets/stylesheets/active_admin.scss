@@ -1,0 +1,57 @@
+// Sass variable overrides must be declared before loading up Active Admin's styles.
+//
+// To view the variables that Active Admin provides, take a look at
+// `app/assets/stylesheets/active_admin/mixins/_variables.scss` in the
+// Active Admin source.
+//
+// For example, to change the sidebar width:
+// $sidebar-width: 242px;
+
+// Active Admin's got SASS!
+$primary-color: #02573c;
+@import "active_admin/mixins";
+@import "arctic_admin/base";
+
+// Overriding any non-variable Sass must be done after the fact.
+// For example, to change the default status-tag color:
+//
+//   .status_tag { background: #6090DB; }
+.active_admin {
+  .quill-editor--active {
+    width: calc(70% - 100px) !important;
+  }
+}
+
+.active_admin.logged_in.edit .input .label {
+  text-align: left;
+}
+@import 'activeadmin/quill_editor/quill.snow';
+@import 'activeadmin/quill_editor_input';
+.my_image_size {
+  width: 275px;
+  height: 183px;
+}
+.my_index_image_size {
+  width: 200px;
+  height: 100px;
+}
+.service_logo_size {
+  width: 60px;
+  height: 60px;
+  border-top-left-radius: 50% 50%; 
+  border-top-right-radius: 50% 50%;
+  border-bottom-right-radius: 50% 50%;
+  border-bottom-left-radius: 50% 50%; 
+}
+.country_flag {
+  width: 100px;
+  height: 60px;
+}
+
+div > span > small {
+  opacity: 0 !important;
+}
+.header #site_title {
+  width: 419px !important;
+  margin-left: -156px;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+#email_confirmed {
+  background-color: rgb(251, 253, 253);
+  color: black;
+  margin-top: 100px;
+  margin-left: 300px;
+  margin-right: 300px;
+  padding: 80px;
+  border :solid black 1px;
+  text-align: center;
+} 
+</style>
+</head>
+<body>
+<div id="email_confirmed">
+    <div style="margin-top: -60px">
+        <img src="https://cdn-icons-png.flaticon.com/512/4436/4436481.png" width="150" height="170" >
+    </div>
+    <div>
+        <h1>Hi <%=@email_confirmation.full_name%></h1>
+        <h1>Your Account Activated Successfully</h1>
+        <h2>Thankyou</h2>
+    </div>
+</div>
+
+</body>
+</html>
